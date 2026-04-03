@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Codveda Task Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fc; /* Soft gray background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+        /* Sidebar Styling */
+        .sidebar {
+            height: 100vh;
+            background-color: #212529;
+            color: white;
+            padding-top: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            padding: 12px 20px;
+            display: block;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+        .sidebar a:hover {
+            color: white;
+            background-color: #343a40;
+        }
+        .sidebar .active {
+            color: white;
+            background-color: #198754; /* Codveda Green */
+            border-left: 4px solid #fff;
+        }
+        /* Top Navigation Styling */
+        .navbar-custom {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,.08);
+            margin-left: 16.66667%; /* Offsets the sidebar */
+        }
+        .main-content {
+            margin-left: 16.66667%;
+            padding: 20px 40px;
+        }
+        /* Card Hover Effects */
+        .task-card {
+            border-left: 4px solid #198754;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,.1);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="col-md-2 d-none d-md-block sidebar">
+    <h4 class="text-center mb-4 text-white fw-bold">
+        <i class="fas fa-check-double me-2 text-success"></i>Task Pro
+    </h4>
+    <a href="#" class="active"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+    <a href="{% url 'my_tasks' %}"><i class="fas fa-tasks me-2"></i> My Tasks</a>
+    <a href="#"><i class="fas fa-chart-pie me-2"></i> Analytics</a>
+    <a href="#"><i class="fas fa-cog me-2"></i> Settings</a>
+</nav>
+
+<nav class="navbar navbar-expand-lg navbar-custom py-3">
+    <div class="container-fluid px-4">
+        <h4 class="mb-0 text-dark fw-bold">Overview</h4>
+        <div class="ms-auto d-flex align-items-center">
+            <span class="me-4 text-muted">
+                <i class="fas fa-user-circle fa-lg me-1 text-primary"></i> 
+                Welcome back, <strong class="text-dark">{{ user.username }}</strong>!
+            </span>
+            
+            <form method="POST" action="{% url 'logout' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="main-content">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+        <h5 class="text-muted">Your daily summary</h5>
+        <span class="badge {% if user.is_superuser %}bg-primary{% else %}bg-secondary{% endif %} p-2 rounded-pill shadow-sm">
+            Role: {% if user.is_superuser %}Admin{% else %}Regular User{% endif %}
+        </span>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm border-0 py-3 rounded-3">
+                <div class="card-body">
+                    <h1 class="text-primary fw-bold"><i class="fas fa-layer-group"></i> 12</h1>
+                    <h6 class="text-muted text-uppercase mb-0 fw-bold">Total Tasks</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm border-0 py-3 rounded-3">
+                <div class="card-body">
+                    <h1 class="text-success fw-bold"><i class="fas fa-check-circle"></i> 8</h1>
+                    <h6 class="text-muted text-uppercase mb-0 fw-bold">Completed</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm border-0 py-3 rounded-3">
+                <div class="card-body">
+                    <h1 class="text-warning fw-bold"><i class="fas fa-clock"></i> 4</h1>
+                    <h6 class="text-muted text-uppercase mb-0 fw-bold">Pending</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-5 rounded-3">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom-0">
+            <h5 class="mb-0 fw-bold text-dark">Recent Activity</h5>
+            <button class="btn btn-success btn-sm rounded-pill px-3 shadow-sm"><i class="fas fa-plus"></i> Add New Task</button>
+        </div>
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item px-4 py-3 d-flex justify-content-between align-items-center task-card" style="border-left-color: #ffc107;">
+                    <div>
+                        <h6 class="mb-1 fw-bold text-dark">Record Codveda Submission Video</h6>
+                        <small class="text-muted">Record demonstration of Level 3 tasks and upload to LinkedIn</small>
+                    </div>
+                    <span class="badge bg-warning text-dark rounded-pill">In Progress</span>
+                </li>
+                <li class="list-group-item px-4 py-3 d-flex justify-content-between align-items-center task-card">
+                    <div>
+                        <h6 class="mb-1 fw-bold text-dark">Build Django User Authentication</h6>
+                        <small class="text-muted">Set up user registration, login templates, and secure database mapping</small>
+                    </div>
+                    <span class="badge bg-success rounded-pill">Done</span>
+                </li>
+                <li class="list-group-item px-4 py-3 d-flex justify-content-between align-items-center task-card" style="border-left-color: #dc3545;">
+                    <div>
+                        <h6 class="mb-1 fw-bold text-dark">Prepare Resume for Ahmedabad Internships</h6>
+                        <small class="text-muted">Update resume with Codveda Python Developer experience</small>
+                    </div>
+                    <span class="badge bg-danger rounded-pill">High Priority</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
